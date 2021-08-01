@@ -1,9 +1,11 @@
 package com.reba.api.person.repository;
 
 import com.reba.api.person.model.Person;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+@Repository
 public class PersonRepositoryImpl implements PersonRepository {
 
     @Override

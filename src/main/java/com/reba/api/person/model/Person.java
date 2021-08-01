@@ -38,8 +38,7 @@ public class Person {
     @NotBlank
     private Integer age;
 
-    public Person(Long id, String firstName, String lastName, DocumentType documentType, String documentNumber, String country, String phone, String email, Integer age) throws AtLeastOneContactDataException, AdultPersonException {
-        this.id = id;
+    public Person(String firstName, String lastName, Integer age, DocumentType documentType, String documentNumber, String country, String phone, String email) throws AtLeastOneContactDataException, AdultPersonException {
         this.firstName = firstName;
         this.lastName = lastName;
         this.documentType = documentType;
@@ -54,12 +53,12 @@ public class Person {
     }
 
     private void validateAgeIsAtLeastEighteen() throws AdultPersonException {
-        if (age >= 18)
+        if (age < 18)
             throw new AdultPersonException();
     }
 
     private void validateAtLeastOneContactData() throws AtLeastOneContactDataException {
-        if ((phone != null && !phone.equals("")) || (email != null && !email.equals("")))
+        if ((phone == null || "".equals(phone)) && (email == null || "".equals(email)))
             throw new AtLeastOneContactDataException();
     }
 

@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("personas")
+@RequestMapping("/personas")
 public class PersonController {
 
     private PersonService personService;
@@ -18,12 +20,12 @@ public class PersonController {
     }
 
     @GetMapping("/")
-    public Person getPersons() {
-        return null;
+    public List<Person> getPersons() {
+        return personService.getAll();
     }
 
     @GetMapping("/")
     public Person getPersonById(@RequestParam("id") String personId) {
-        return null;
+        return personService.getById(Integer.getInteger(personId));
     }
 }
