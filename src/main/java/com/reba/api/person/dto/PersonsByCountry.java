@@ -1,4 +1,4 @@
-package com.reba.api.person.model;
+package com.reba.api.person.dto;
 
 public class PersonsByCountry {
 

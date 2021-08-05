@@ -2,11 +2,12 @@ package com.reba.api.person.service;
 
 import com.reba.api.person.exception.PersonNotFoundException;
 import com.reba.api.person.model.Person;
-import com.reba.api.person.model.PersonsByCountry;
+import com.reba.api.person.dto.PersonsByCountry;
 import com.reba.api.person.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +34,7 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public void delete(Long personId) {
+    public void delete(Integer personId) {
 
         personRepository.findById(personId)
                 .orElseThrow(() -> new PersonNotFoundException(personId));
@@ -42,15 +43,13 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Person getById(Long personId) {
-
+    public Person getById(Integer personId) {
         return personRepository.findById(personId)
                 .orElseThrow(() -> new PersonNotFoundException(personId));
     }
 
 
     public Person getByFullNameAndCounty(String firstName, String lastName, String country) {
-
         return  Optional.ofNullable(personRepository.findByFullNameAndCounty(firstName, lastName, country))
                 .orElseThrow(() -> new PersonNotFoundException());
     }
@@ -68,7 +67,7 @@ public class PersonServiceImpl implements PersonService {
                 if(opt.isPresent()) {
                     List<Object[]> repoList = (List<Object[]>) opt.get();
                     for (Object[] ob : repoList){
-                        countlist.add(new PersonsByCountry((String) ob[0], (Integer) ob[1]));
+                        countlist.add(new PersonsByCountry((String) ob[0], ((BigInteger) ob[1]).intValue()));
                     }
                     return countlist;
                 } else throw new PersonNotFoundException();

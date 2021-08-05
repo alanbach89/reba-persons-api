@@ -1,8 +1,10 @@
 package com.reba.api.person.controller;
 
+import com.reba.api.person.dto.PersonsByCountry;
 import com.reba.api.person.enums.RelationType;
+import com.reba.api.person.exception.PersonAlreadyExistsException;
+import com.reba.api.person.exception.PersonNotFoundException;
 import com.reba.api.person.model.Person;
-import com.reba.api.person.model.PersonsByCountry;
 import com.reba.api.person.model.Relation;
 import com.reba.api.person.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.http.HttpResponse;
 import java.util.List;
 
 @RestController
@@ -26,70 +27,85 @@ public class PersonController {
 
     @GetMapping("/")
     public ResponseEntity<List<Person>> getPersons() {
-        List<Person> list = personService.getAll();
-        return new ResponseEntity<>(list, HttpStatus.OK);
+        try {
+            List<Person> list = personService.getAll();
+            return new ResponseEntity<>(list, HttpStatus.OK);
+        } catch (Exception ex) {
+            System.out.println(ex);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    @GetMapping("/")
-    public ResponseEntity<Person> getPersonById(@RequestParam("id") Long personId) {
-        Person person = personService.getById(personId);
-        return new ResponseEntity<>(person, HttpStatus.OK);
+    @GetMapping("/{id}")
+    public ResponseEntity<Person> getPersonById(@PathVariable("id") Integer personId) {
+        try {
+            Person person = personService.getById(personId);
+            return new ResponseEntity<>(person, HttpStatus.OK);
+        } catch (Exception ex) {
+            System.out.println(ex);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PutMapping("/")
     public ResponseEntity<Person> updatePerson(@RequestBody Person person) {
-        Person updatedPerson =  personService.update(person);
-        return new ResponseEntity<>(updatedPerson, HttpStatus.OK);
+        try {
+            validateNonRepeatedData(person.getDocumentType().toString(), person.getDocumentNumber(), person.getCountry());
+            Person updatedPerson =  personService.update(person);
+            return new ResponseEntity<>(updatedPerson, HttpStatus.OK);
+        } catch (PersonAlreadyExistsException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception ex) {
+            System.out.println(ex);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    @PutMapping("/")
+    @PostMapping("/")
     public ResponseEntity<Person> createPerson(@RequestBody Person person) {
-        Person createPerson =  personService.create(person);
-        return new ResponseEntity<>(createPerson, HttpStatus.OK);
+        try {
+            validateNonRepeatedData(person.getDocumentType().toString(), person.getDocumentNumber(), person.getCountry());
+            Person createPerson =  personService.create(person);
+            return new ResponseEntity<>(createPerson, HttpStatus.OK);
+        } catch (PersonAlreadyExistsException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception ex) {
+            System.out.println(ex);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/stats")
     public ResponseEntity<List<PersonsByCountry>> getPersonCountByCountry() {
-        List<PersonsByCountry> stats =  personService.getPersonCountByCounty();
-        return new ResponseEntity<>(stats, HttpStatus.OK);
+        try {
+            List<PersonsByCountry> stats =  personService.getPersonCountByCounty();
+            return new ResponseEntity<>(stats, HttpStatus.OK);
+        } catch (Exception ex) {
+            System.out.println(ex);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/{id1}/padre/{id2}")
-    public ResponseEntity<String> updateParentRelationship(@RequestParam("id1") Long personId1, @RequestParam("id2") Long personId2) {
-        Person person1 = personService.getById(personId1);
-        Person person2 = personService.getById(personId2);
+    public ResponseEntity<String> updateParentRelationship(@PathVariable("id1") Integer personId1, @PathVariable("id2") Integer personId2) {
+        try {
+            Person person1 = personService.getById(personId1);
+            Person person2 = personService.getById(personId2);
+            person1.getRelations().add(new Relation(person1, personId2, RelationType.PADRE));
+            personService.update(person1);
 
-        Relation p1IsParent = new Relation(person1, RelationType.PADRE);
-        person2.getRelations().add(p1IsParent);
-        personService.update(person2);
-
-        return new ResponseEntity<>(personId1 + " es padre de " + personId2, HttpStatus.OK);
+            return new ResponseEntity<>(personId1 + " es padre de " + personId2, HttpStatus.OK);
+        } catch (Exception ex) {
+            System.out.println(ex);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    @GetMapping("/relaciones/{id1}/{id2}")
-    public ResponseEntity<String> getPersonRelationship(@RequestParam("id1") Long personId1, @RequestParam("id2") Long personId2) {
-        Person person1 = personService.getById(personId1);
-
-        Relation relationship = person1.getRelations().stream().filter(relation -> relation.getPerson().getId() == personId2).findFirst().get();
-
-
-        return new ResponseEntity<>(personId1 + " es " + relationship.getRelation() + " de " + personId2, HttpStatus.OK);
-    }
-
-    @PostMapping("/relaciones/{id1}/{relation}/{id2}")
-    public ResponseEntity<Person> updatePersonRelationship(@RequestParam("id1") Long personId1, @RequestParam("relation") String relation, @RequestParam("id2") Long personId2) {
-        Person person1 = personService.getById(personId1);
-        Person person2 = personService.getById(personId2);
-
-        Relation p1IsParent = new Relation(person1, RelationType.fromString(relation));
-
-        if(person2.getRelations() != null)
-            person2.getRelations().add(p1IsParent);
-        else
-            person2.setRelations(List.of(p1IsParent));
-
-        Person updatedPerson = personService.update(person2);
-
-        return new ResponseEntity<>(updatedPerson, HttpStatus.OK);
+    private void validateNonRepeatedData(String documentType, String docunmentValue, String country) {
+        try {
+            Person person = personService.getByFullNameAndCounty(documentType, docunmentValue, country);
+            if (person != null)
+                throw new PersonAlreadyExistsException();
+        } catch (PersonNotFoundException ex) {}
     }
 }

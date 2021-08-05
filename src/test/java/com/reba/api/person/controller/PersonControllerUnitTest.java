@@ -6,6 +6,7 @@ import com.reba.api.person.exception.AtLeastOneContactDataException;
 import com.reba.api.person.help.CountryList;
 import com.reba.api.person.model.Person;
 import com.reba.api.person.service.PersonService;
+import com.reba.api.person.service.RelationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;

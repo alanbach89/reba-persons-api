@@ -14,7 +14,7 @@ public class DatasourceConfig {
     public DataSource datasource() {
         return DataSourceBuilder.create()
                 .driverClassName("com.mysql.cj.jdbc.Driver")
-                .url("jdbc:mysql://localhost:3306/reba_persons")
+                .url("jdbc:mysql://localhost:3306/reba_persons?createDatabaseIfNotExist=true")
                 .username("root")
                 .password("")
                 .build();

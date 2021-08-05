@@ -57,13 +57,13 @@ class PersonServiceUnitTest {
     @Test
     public void whenGetByIdErrorShouldReturnException() throws Exception {
 
-        when(personRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
+        when(personRepository.findById(anyInt())).thenReturn(Optional.ofNullable(null));
 
         assertThrows(PersonNotFoundException.class, () -> {
-            personService.getById(999L);
+            personService.getById(999);
         });
 
-        verify(personRepository).findById(anyLong());
+        verify(personRepository).findById(anyInt());
     }
 
     @Test

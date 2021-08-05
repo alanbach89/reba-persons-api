@@ -1,25 +1,43 @@
 package com.reba.api.person.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.reba.api.person.enums.DocumentType;
 import com.reba.api.person.exception.AdultPersonException;
 import com.reba.api.person.exception.AtLeastOneContactDataException;
-import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "persons")
-@IdClass(PersonId.class)
-public class Person {
+public class Person implements Serializable {
 
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(unique=true)
-    private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(unique = true, nullable = false, insertable = false, updatable = false)
+    private Integer id;
 
+    @NotNull
+    @Column(name="document_type", columnDefinition = "VARCHAR(45)")
+    @Enumerated(value = EnumType.STRING)
+    private DocumentType documentType;
+
+    @NotBlank
+    @NotNull
+    @Column(name="document_number", length = 45)
+    private String documentNumber;
+
+    @NotBlank
+    @NotNull
+    @Column(length = 45)
+    private String country;
 
     @NotBlank
     @NotNull
@@ -31,38 +49,20 @@ public class Person {
     @Column(name="last_name", length = 150)
     private String lastName;
 
-    @Id
-    @NotBlank
-    @NotNull
-    @Column(name="document_type", columnDefinition = "VARCHAR(45)")
-    @Length(max = 45)
-    @Enumerated(value = EnumType.STRING)
-    private DocumentType documentType;
-
-    @Id
-    @NotBlank
-    @NotNull
-    @Column(name="document_number", length = 45)
-    private String documentNumber;
-
-    @Id
-    @NotBlank
-    @NotNull
-    @Column(length = 45)
-    private String country;
-
     @Column(length = 45)
     private String phone;
 
     @Column(length = 155)
     private String email;
 
-    @OneToMany(mappedBy ="person", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Relation> relations;
-
-    @NotBlank
     @NotNull
     private Integer age;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "person")
+    @JsonManagedReference
+    private Set<Relation> relations = new HashSet<>();
+
+    public Person() {}
 
     public Person(String firstName, String lastName, Integer age, DocumentType documentType, String documentNumber, String country, String phone, String email) throws AtLeastOneContactDataException, AdultPersonException {
         this.firstName = firstName;
@@ -89,11 +89,11 @@ public class Person {
     }
 
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -161,11 +161,11 @@ public class Person {
         this.age = age;
     }
 
-    public List<Relation> getRelations() {
+    public Set<Relation> getRelations() {
         return relations;
     }
 
-    public void setRelations(List<Relation> relations) {
+    public void setRelations(Set<Relation> relations) {
         this.relations = relations;
     }
 

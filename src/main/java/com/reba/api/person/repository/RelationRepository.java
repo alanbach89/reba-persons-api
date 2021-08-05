@@ -10,5 +10,5 @@ import java.util.List;
 
 
 @Repository
-public interface RelationRepository extends CrudRepository<Relation, Long> {
+public interface RelationRepository extends CrudRepository<Relation, Integer> {
 }
