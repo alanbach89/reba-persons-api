@@ -1,0 +1,190 @@
+{
+	"info": {
+		"_postman_id": "3cb844fb-f114-4eb7-b355-66a2b32c43e0",
+		"name": "reba",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Person",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/personas/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"personas",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Persons",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/personas/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"personas",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Stats",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/personas/stats",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"personas",
+						"stats"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Set Padre",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/personas/1/padre/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"personas",
+						"1",
+						"padre",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Relacion",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/relaciones/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"relaciones",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Relacion por Personas",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/relaciones/5/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"relaciones",
+						"5",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Person",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"id\": 1,\r\n    \"documentType\": \"DNI\",\r\n    \"documentNumber\": \"34345345\",\r\n    \"country\": \"Emiratos Árabes Unidos\",\r\n    \"firstName\": \"Jose\",\r\n    \"lastName\": \"Asdasdasdasd\",\r\n    \"phone\": \"324554423\",\r\n    \"email\": \"asdasd@gmail.com\",\r\n    \"age\": 31,\r\n    \"relations\": []\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/personas/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"personas",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Person",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"documentType\": \"DNI\",\r\n    \"documentNumber\": \"34349945\",\r\n    \"country\": \"Argentina\",\r\n    \"firstName\": \"Luciano\",\r\n    \"lastName\": \"Mendez\",\r\n    \"phone\": \"111111111\",\r\n    \"email\": \"asdas1212d@gmail.com\",\r\n    \"age\": 41\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/personas/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"personas",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
